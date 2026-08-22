@@ -55,6 +55,12 @@ export const UrlPromocionesEndpoints = {
   ReponerPromocion: `${UrlPromocionesAdmin}/ReponerPromocion/`,
 };
 
+export const UrlPedidosAdmin: string = `${apibase}PedidosAdmin`;
+export const UrlPedidosEndpoints = {
+  ListarPedidos: `${UrlPedidosAdmin}/ListarPedidos`,
+  ActualizarPedido: `${UrlPedidosAdmin}/ActualizarPedido`,
+};
+
 export const UrlDescuentosAdmin: string = `${apibase}DescuentoAdmin`;
 export const UrlDescuentosEndpoints = {
   ListarTodosDescuentos: `${UrlDescuentosAdmin}/ListarTodosDescuentos`,

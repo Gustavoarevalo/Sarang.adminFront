@@ -7,6 +7,7 @@ export const orderStatusLabels: Record<OrderStatus, string> = {
   'courier-pickup': 'Courier retiró',
   'in-transit': 'En ruta',
   delivered: 'Entregado',
+  cancelled: 'Cancelado',
 };
 
 export const orderStatusFlow: OrderStatus[] = [

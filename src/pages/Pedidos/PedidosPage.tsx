@@ -1,10 +1,12 @@
-import { Badge, Button, Card, Col, Form, Row } from "react-bootstrap";
-import { useMemo, useState } from "react";
+import { Alert, Badge, Button, Card, Col, Form, Row, Spinner } from "react-bootstrap";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Pageheader from "../../Components/Layouts/Pageheader/Pageheader";
 import PeriodFilter from "../../Components/components/PeriodFilter";
-import { orderStatusFlow, orderStatusLabels, ordersSeed } from "../../data/orders";
+import { UsePedidos } from "../../api/Controller/Pedidos/PedidosController";
+import { orderStatusFlow, orderStatusLabels } from "../../data/orders";
 import type { OrderStatus, StoreOrder } from "../../types/orders";
 import type { OrderDateRange, OrderPeriodFilter } from "../../types/period";
+import { mapPedidoToStoreOrder, toEstadoPedido } from "../../utils/order-mapper";
 import { filterOrdersByPeriod } from "../../utils/order-period";
 import { calculateOrderTotals, IVA_RATE } from "../../utils/order-totals";
 import PedidoFormModal from "./PedidoFormModal";
@@ -17,7 +19,10 @@ const currencyFormatter = new Intl.NumberFormat('es-EC', {
 const generateTrackingNumber = () => String(Math.floor(80000 + Math.random() * 19999));
 
 const PedidosPage = () => {
-    const [orders, setOrders] = useState<StoreOrder[]>(ordersSeed);
+    const { Listar, Actualizar } = UsePedidos();
+    const [orders, setOrders] = useState<StoreOrder[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [loadError, setLoadError] = useState("");
     const [isCreateOrderOpen, setIsCreateOrderOpen] = useState(false);
     const [selectedPeriod, setSelectedPeriod] = useState<OrderPeriodFilter>('today');
     const [dateRange, setDateRange] = useState<OrderDateRange>({
@@ -30,6 +35,28 @@ const PedidosPage = () => {
         [dateRange, orders, selectedPeriod],
     );
 
+    // Los pedidos pagados en la tienda entran por aqui: se listan desde la BD.
+    const cargarPedidos = useCallback(async () => {
+        setLoading(true);
+        try {
+            const data = await Listar({ skip: 0, take: 0 });
+            setOrders((current) => [
+                ...current.filter((order) => order.idPedido == null),
+                ...(data?.listarRegistros ?? []).map(mapPedidoToStoreOrder),
+            ]);
+            setLoadError("");
+        } catch {
+            setLoadError("No se pudieron cargar los pedidos de la tienda.");
+        } finally {
+            setLoading(false);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        void cargarPedidos();
+    }, [cargarPedidos]);
+
     const counters = useMemo(
         () =>
             filteredOrders.reduce<Record<OrderStatus, number>>(
@@ -41,6 +68,7 @@ const PedidosPage = () => {
                     'courier-pickup': 0,
                     'in-transit': 0,
                     delivered: 0,
+                    cancelled: 0,
                 },
             ),
         [filteredOrders],
@@ -48,17 +76,37 @@ const PedidosPage = () => {
 
     const nextOrderNumber = useMemo(() => `BR-${orders.length + 1001}`, [orders.length]);
 
-    const handleStatusChange = (orderId: string, status: OrderStatus) => {
+    const handleStatusChange = async (orderId: string, status: OrderStatus) => {
+        const order = orders.find((item) => item.id === orderId);
         //prettier-ignore
-        setOrders((current) => current.map((order) => (order.id === orderId ? { ...order, status } : order)));
+        setOrders((current) => current.map((item) => (item.id === orderId ? { ...item, status } : item)));
+
+        if (order?.idPedido == null) return;
+        try {
+            await Actualizar({ idPedidoEntitys: order.idPedido, estadoPedido: toEstadoPedido(status) });
+        } catch {
+            setLoadError("No se pudo guardar el nuevo estado del pedido.");
+            void cargarPedidos();
+        }
     };
 
-    const handleRequestTracking = (orderId: string) => {
+    const handleRequestTracking = async (orderId: string) => {
+        const order = orders.find((item) => item.id === orderId);
+        const tracking = generateTrackingNumber();
         setOrders((current) =>
-            current.map((order) =>
-                order.id === orderId ? { ...order, sendificoTracking: generateTrackingNumber() } : order,
+            current.map((item) =>
+                item.id === orderId ? { ...item, sendificoTracking: tracking } : item,
             ),
         );
+
+        if (order?.idPedido == null) return;
+        try {
+            //prettier-ignore
+            await Actualizar({ idPedidoEntitys: order.idPedido, tracking, courier: order.courier ?? 'Sendifico Express' });
+        } catch {
+            setLoadError("No se pudo guardar el tracking del pedido.");
+            void cargarPedidos();
+        }
     };
 
     const handleCreateOrder = (order: StoreOrder) => {
@@ -75,14 +123,23 @@ const PedidosPage = () => {
                     <Card>
                         <Card.Header className="d-flex justify-content-between align-items-center">
                             <Card.Title as="h3" className="mb-0">Gestión de pedidos</Card.Title>
-                            <Button variant="primary" onClick={() => setIsCreateOrderOpen(true)}>
-                                Crear pedido
-                            </Button>
+                            <div className="d-flex align-items-center" style={{ gap: 10 }}>
+                                {loading && <Spinner animation="border" size="sm" variant="primary" />}
+                                <Button variant="outline-primary" onClick={() => void cargarPedidos()} disabled={loading}>
+                                    Actualizar
+                                </Button>
+                                <Button variant="primary" onClick={() => setIsCreateOrderOpen(true)}>
+                                    Crear pedidos
+                                </Button>
+                            </div>
                         </Card.Header>
                         <Card.Body>
                             <p className="text-muted">
                                 Filtra los pedidos por fecha, crea pedidos externos y cambia su estado hasta la entrega.
+                                Las compras pagadas en la tienda aparecen aquí apenas se aprueba el cobro.
                             </p>
+
+                            {loadError && <Alert variant="danger">{loadError}</Alert>}
 
                             <PeriodFilter
                                 dateRange={dateRange}
@@ -103,7 +160,10 @@ const PedidosPage = () => {
                 </Col>
 
                 {filteredOrders.map((order) => {
-                    const totals = calculateOrderTotals(order.products);
+                    // Pedido de la tienda: se muestran los totales que se cobraron.
+                    // Pedido creado a mano: se calculan con el IVA del panel.
+                    const calculated = calculateOrderTotals(order.products);
+                    const totals = order.totals ?? { ...calculated, shipping: 0 };
                     const canRequestTracking = order.deliveryMethod === 'courier' && !order.sendificoTracking;
 
                     return (
@@ -130,9 +190,15 @@ const PedidosPage = () => {
                                         <span>{currencyFormatter.format(totals.subtotal)}</span>
                                     </div>
                                     <div className="d-flex justify-content-between">
-                                        <span className="text-muted">IVA {IVA_RATE * 100}%</span>
+                                        <span className="text-muted">{order.totals ? 'Impuestos' : `IVA ${IVA_RATE * 100}%`}</span>
                                         <span>{currencyFormatter.format(totals.iva)}</span>
                                     </div>
+                                    {order.totals && (
+                                        <div className="d-flex justify-content-between">
+                                            <span className="text-muted">Envío</span>
+                                            <span>{currencyFormatter.format(totals.shipping)}</span>
+                                        </div>
+                                    )}
                                     <div className="d-flex justify-content-between fw-bold">
                                         <span>Total</span>
                                         <span>{currencyFormatter.format(totals.total)}</span>
@@ -156,7 +222,7 @@ const PedidosPage = () => {
                                             <Form.Select
                                                 value={order.status}
                                                 //prettier-ignore
-                                                onChange={({ target: { value } }) => handleStatusChange(order.id, value as OrderStatus)}
+                                                onChange={({ target: { value } }) => void handleStatusChange(order.id, value as OrderStatus)}
                                             >
                                                 {orderStatusFlow.map((status) => (
                                                     <option key={status} value={status}>{orderStatusLabels[status]}</option>
@@ -171,7 +237,7 @@ const PedidosPage = () => {
                                                     variant="outline-primary"
                                                     className="w-100"
                                                     disabled={!canRequestTracking}
-                                                    onClick={() => handleRequestTracking(order.id)}
+                                                    onClick={() => void handleRequestTracking(order.id)}
                                                 >
                                                     Solicitar tracking
                                                 </Button>
@@ -187,7 +253,9 @@ const PedidosPage = () => {
                 {filteredOrders.length === 0 && (
                     <Col lg={12}>
                         <Card><Card.Body>
-                            <p className="text-muted mb-0 text-center">No hay pedidos en el periodo seleccionado.</p>
+                            <p className="text-muted mb-0 text-center">
+                                {loading ? 'Cargando pedidos…' : 'No hay pedidos en el periodo seleccionado.'}
+                            </p>
                         </Card.Body></Card>
                     </Col>
                 )}

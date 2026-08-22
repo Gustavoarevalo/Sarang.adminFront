@@ -4,7 +4,8 @@ export type OrderStatus =
   | 'packed'
   | 'courier-pickup'
   | 'in-transit'
-  | 'delivered';
+  | 'delivered'
+  | 'cancelled';
 
 export type DeliveryMethod = 'pickup' | 'courier';
 
@@ -26,8 +27,19 @@ export type ShippingAddress = {
   longitude?: number;
 };
 
+/** Totales que ya vienen calculados desde el backend (pedido real de la tienda). */
+export type OrderTotals = {
+  subtotal: number;
+  iva: number;
+  shipping: number;
+  total: number;
+};
+
 export type StoreOrder = {
   id: string;
+  /** Id en la base. Solo lo tienen los pedidos que vienen de la tienda. */
+  idPedido?: number;
+  totals?: OrderTotals;
   orderNumber: string;
   orderDate: string;
   deliveryMethod: DeliveryMethod;

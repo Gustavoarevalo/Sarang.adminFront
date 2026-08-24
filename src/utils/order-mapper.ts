@@ -3,31 +3,23 @@ import type { IPedidoAdminDto } from '../api/Controller/Pedidos/InterfacePedidos
 import type { OrderStatus, StoreOrder } from '../types/orders';
 
 const estadoToStatus: Record<EnumEstadoPedido, OrderStatus> = {
-  [EnumEstadoPedido.Paid]: 'paid',
-  [EnumEstadoPedido.Received]: 'received',
-  [EnumEstadoPedido.Packed]: 'packed',
-  [EnumEstadoPedido.CourierPickup]: 'courier-pickup',
-  [EnumEstadoPedido.InTransit]: 'in-transit',
-  [EnumEstadoPedido.Delivered]: 'delivered',
-  [EnumEstadoPedido.Cancelled]: 'cancelled',
+  [EnumEstadoPedido.Iniciado]: 'iniciado',
+  [EnumEstadoPedido.Despachado]: 'despachado',
+  [EnumEstadoPedido.Cancelado]: 'cancelado',
 };
 
 const statusToEstado: Record<OrderStatus, EnumEstadoPedido> = {
-  paid: EnumEstadoPedido.Paid,
-  received: EnumEstadoPedido.Received,
-  packed: EnumEstadoPedido.Packed,
-  'courier-pickup': EnumEstadoPedido.CourierPickup,
-  'in-transit': EnumEstadoPedido.InTransit,
-  delivered: EnumEstadoPedido.Delivered,
-  cancelled: EnumEstadoPedido.Cancelled,
+  iniciado: EnumEstadoPedido.Iniciado,
+  despachado: EnumEstadoPedido.Despachado,
+  cancelado: EnumEstadoPedido.Cancelado,
 };
 
 export function toOrderStatus(estado: EnumEstadoPedido): OrderStatus {
-  return estadoToStatus[estado] ?? 'paid';
+  return estadoToStatus[estado] ?? 'iniciado';
 }
 
 export function toEstadoPedido(status: OrderStatus): EnumEstadoPedido {
-  return statusToEstado[status] ?? EnumEstadoPedido.Paid;
+  return statusToEstado[status] ?? EnumEstadoPedido.Iniciado;
 }
 
 /** "2026-05-30T09:15:00" -> "2026-05-30 09:15" (formato que espera filterOrdersByPeriod). */

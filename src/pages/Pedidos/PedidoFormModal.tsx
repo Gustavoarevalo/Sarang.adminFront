@@ -115,7 +115,7 @@ const PedidoFormModal: React.FC<PedidoFormModalProps> = ({ open, nextOrderNumber
             orderDate: formatOrderDate(new Date()),
             deliveryMethod: usesCourier ? 'courier' : 'pickup',
             paymentMethod: 'Pedido manual',
-            status: 'received',
+            status: 'iniciado',
             courier: usesCourier ? 'Courier por asignar' : undefined,
             address,
             products: selectedProducts,

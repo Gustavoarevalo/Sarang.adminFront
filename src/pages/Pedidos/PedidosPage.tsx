@@ -61,15 +61,7 @@ const PedidosPage = () => {
         () =>
             filteredOrders.reduce<Record<OrderStatus, number>>(
                 (result, order) => ({ ...result, [order.status]: result[order.status] + 1 }),
-                {
-                    paid: 0,
-                    received: 0,
-                    packed: 0,
-                    'courier-pickup': 0,
-                    'in-transit': 0,
-                    delivered: 0,
-                    cancelled: 0,
-                },
+                { iniciado: 0, despachado: 0, cancelado: 0 },
             ),
         [filteredOrders],
     );

@@ -1,23 +1,13 @@
 import type { OrderStatus, StoreOrder } from '../types/orders';
 
 export const orderStatusLabels: Record<OrderStatus, string> = {
-  paid: 'Nuevo pedido',
-  received: 'Pedido recibido',
-  packed: 'Empaquetado',
-  'courier-pickup': 'Courier retiró',
-  'in-transit': 'En ruta',
-  delivered: 'Entregado',
-  cancelled: 'Cancelado',
+  iniciado: 'Iniciado',
+  despachado: 'Despachado',
+  cancelado: 'Cancelado',
 };
 
-export const orderStatusFlow: OrderStatus[] = [
-  'paid',
-  'received',
-  'packed',
-  'courier-pickup',
-  'in-transit',
-  'delivered',
-];
+/** Estados que el panel ofrece en el selector, en el orden del flujo. */
+export const orderStatusFlow: OrderStatus[] = ['iniciado', 'despachado', 'cancelado'];
 
 export const ordersSeed: StoreOrder[] = [
   {
@@ -26,7 +16,7 @@ export const ordersSeed: StoreOrder[] = [
     orderDate: '2026-05-30 09:15',
     deliveryMethod: 'courier',
     paymentMethod: 'Tarjeta',
-    status: 'received',
+    status: 'iniciado',
     sendificoTracking: '89021',
     courier: 'Sendifico Express',
     address: {
@@ -48,7 +38,7 @@ export const ordersSeed: StoreOrder[] = [
     orderDate: '2026-05-30 10:40',
     deliveryMethod: 'courier',
     paymentMethod: 'Transferencia',
-    status: 'packed',
+    status: 'iniciado',
     sendificoTracking: '89022',
     courier: 'Sendifico Same Day',
     address: {
@@ -70,7 +60,7 @@ export const ordersSeed: StoreOrder[] = [
     orderDate: '2026-05-29 11:08',
     deliveryMethod: 'courier',
     paymentMethod: 'Payphone',
-    status: 'in-transit',
+    status: 'despachado',
     sendificoTracking: '89023',
     courier: 'Sendifico Nacional',
     address: {
@@ -92,7 +82,7 @@ export const ordersSeed: StoreOrder[] = [
     orderDate: '2026-04-18 16:22',
     deliveryMethod: 'courier',
     paymentMethod: 'Tarjeta',
-    status: 'delivered',
+    status: 'despachado',
     sendificoTracking: '88990',
     courier: 'Sendifico Nacional',
     address: {

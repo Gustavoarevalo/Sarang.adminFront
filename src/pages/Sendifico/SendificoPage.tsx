@@ -9,7 +9,7 @@ const SendificoPage = () => {
         (order) =>
             order.deliveryMethod === 'courier' &&
             Boolean(order.address) &&
-            ['packed', 'courier-pickup', 'in-transit', 'delivered'].includes(order.status),
+            order.status === 'despachado',
     );
 
     return (

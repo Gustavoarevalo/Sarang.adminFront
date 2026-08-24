@@ -32,8 +32,8 @@ const DashboardPage = () => {
     );
 
     const totalOrders = filteredOrders.length;
-    const packedOrders = filteredOrders.filter((order) => order.status === 'packed').length;
-    const transitOrders = filteredOrders.filter((order) => order.status === 'in-transit').length;
+    const startedOrders = filteredOrders.filter((order) => order.status === 'iniciado').length;
+    const dispatchedOrders = filteredOrders.filter((order) => order.status === 'despachado').length;
     const revenue = filteredOrders.reduce(
         (sum, order) => sum + calculateOrderTotals(order.products).total,
         0,
@@ -73,16 +73,16 @@ const DashboardPage = () => {
                                 <Col xl={3} md={6}>
                                     <Card>
                                         <Card.Body>
-                                            <p className="mb-1 text-muted">Listos para enviar</p>
-                                            <h3 className="mb-0">{packedOrders}</h3>
+                                            <p className="mb-1 text-muted">Por despachar</p>
+                                            <h3 className="mb-0">{startedOrders}</h3>
                                         </Card.Body>
                                     </Card>
                                 </Col>
                                 <Col xl={3} md={6}>
                                     <Card>
                                         <Card.Body>
-                                            <p className="mb-1 text-muted">En ruta</p>
-                                            <h3 className="mb-0">{transitOrders}</h3>
+                                            <p className="mb-1 text-muted">Despachados</p>
+                                            <h3 className="mb-0">{dispatchedOrders}</h3>
                                         </Card.Body>
                                     </Card>
                                 </Col>

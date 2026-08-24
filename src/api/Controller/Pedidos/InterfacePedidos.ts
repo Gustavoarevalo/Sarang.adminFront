@@ -1,12 +1,8 @@
 /** Espejo de EnumEstadoPedido del backend. */
 export enum EnumEstadoPedido {
-  Paid = 1,
-  Received = 2,
-  Packed = 3,
-  CourierPickup = 4,
-  InTransit = 5,
-  Delivered = 6,
-  Cancelled = 7,
+  Iniciado = 1,
+  Despachado = 2,
+  Cancelado = 3,
 }
 
 export enum EnumMetodoEntrega {

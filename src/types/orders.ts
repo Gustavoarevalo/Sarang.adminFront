@@ -1,11 +1,5 @@
-export type OrderStatus =
-  | 'paid'
-  | 'received'
-  | 'packed'
-  | 'courier-pickup'
-  | 'in-transit'
-  | 'delivered'
-  | 'cancelled';
+/** Espejo de EnumEstadoPedido del backend. Por ahora el pedido solo nace y se despacha. */
+export type OrderStatus = 'iniciado' | 'despachado' | 'cancelado';
 
 export type DeliveryMethod = 'pickup' | 'courier';
 

@@ -1,0 +1,70 @@
+# ============================================================
+#  EcommerAdmin - panel de administracion (Vite + React)
+#
+#  Local:   docker compose up --build   ->  http://localhost:8080
+#  Dokploy: las variables de abajo se cargan en la pestana Environment
+#           de la aplicacion; no subas .env al repositorio.
+#
+#  OJO con las VITE_*: son variables de BUILD. Se incrustan en el bundle
+#  al compilar, por lo que cualquier cambio exige "up --build" (o un
+#  redeploy en Dokploy), no basta con reiniciar el contenedor.
+# ============================================================
+
+services:
+  admin:
+    build:
+      context: .
+      # El archivo se llama en minuscula, hay que declararlo explicitamente.
+      dockerfile: dockerfile
+      args:
+        # Vacio = el bundle usa rutas relativas /api y nginx hace de proxy
+        # hacia BACKEND_ORIGIN (recomendado: mismo origen, sin CORS).
+        # Con valor = el navegador llama directo a esa URL y el backend
+        # tiene que permitir el origen del panel por CORS.
+        VITE_BACK_URL: ${VITE_BACK_URL:-}
+        VITE_FIREBASE_API_KEY: ${VITE_FIREBASE_API_KEY:-}
+        VITE_FIREBASE_AUTH_DOMAIN: ${VITE_FIREBASE_AUTH_DOMAIN:-}
+        VITE_FIREBASE_PROJECT_ID: ${VITE_FIREBASE_PROJECT_ID:-}
+        VITE_FIREBASE_STORAGE_BUCKET: ${VITE_FIREBASE_STORAGE_BUCKET:-}
+        VITE_FIREBASE_MESSAGING_SENDER_ID: ${VITE_FIREBASE_MESSAGING_SENDER_ID:-}
+        VITE_FIREBASE_APP_ID: ${VITE_FIREBASE_APP_ID:-}
+        VITE_FIREBASE_VAPID_KEY: ${VITE_FIREBASE_VAPID_KEY:-}
+    image: ecommeradmin:latest
+    container_name: ecommeradmin
+    restart: unless-stopped
+    environment:
+      # Unica variable de RUNTIME: a donde reenvia nginx las llamadas /api.
+      # - Si el backend corre en el compose de ./Back:  http://gateway:5087
+      #   (hay que compartir red, ver el bloque "networks" de abajo).
+      # - Si el gateway ya esta publicado:              https://api.midominio.com
+      # - Si el backend esta en el host y esto es local: http://host.docker.internal:5087
+      BACKEND_ORIGIN: ${BACKEND_ORIGIN:-http://gateway:5087}
+      NGINX_ENVSUBST_FILTER: ^BACKEND_
+    ports:
+      # 8080 para no chocar con el 3001 (tiendacosmeticos y Grafana),
+      # el 5020 (API) ni el 5087 (gateway).
+      - "8080:80"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1/index.html || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+# Para que el proxy /api llegue al gateway del compose de ../../Back hay que
+# unir ambos stacks en la misma red. Levanta primero el backend
+# (cd ../../Back && docker compose up -d), comprueba el nombre real con
+# "docker network ls" y descomenta:
+#
+#    networks:
+#      - backend-net
+#
+# networks:
+#   backend-net:
+#     external: true
+#     name: back_backend-net

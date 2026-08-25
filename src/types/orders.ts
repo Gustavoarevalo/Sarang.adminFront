@@ -4,6 +4,9 @@ export type OrderStatus = 'verificando' | 'iniciado' | 'despachado' | 'cancelado
 
 export type DeliveryMethod = 'pickup' | 'courier';
 
+/** Como se pago el pedido. Espejo de EnumMetodoPago del backend. */
+export type PaymentType = 'tarjeta' | 'transferencia';
+
 export type ProductSummary = {
   id: string;
   name: string;
@@ -39,6 +42,10 @@ export type StoreOrder = {
   orderDate: string;
   deliveryMethod: DeliveryMethod;
   paymentMethod: string;
+  /** Metodo normalizado, para filtrar sin depender de como este escrito paymentMethod. */
+  paymentType?: PaymentType;
+  /** Ticket de la pasarela (Kushki). Solo lo tienen los pedidos pagados con tarjeta. */
+  ticketNumber?: string;
   status: OrderStatus;
   sendificoTracking?: string;
   courier?: string;

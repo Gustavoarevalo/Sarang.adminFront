@@ -16,6 +16,7 @@ const CategoriasPage = lazy(() => import("../../../pages/Catalogos/Categorias/Ca
 const ImpuestosPage = lazy(() => import("../../../pages/Catalogos/Impuestos/ImpuestosPage"));
 const IvaPage = lazy(() => import("../../../pages/Catalogos/Iva/IvaPage"));
 const CostosEnvioPage = lazy(() => import("../../../pages/Catalogos/CostosEnvio/CostosEnvioPage"));
+const CuentasBancariasPage = lazy(() => import("../../../pages/Catalogos/CuentasBancarias/CuentasBancariasPage"));
 // -------------- Configuracion --------------------- //
 const ConfiguracionPage = lazy(() => import("../../../pages/Configuracion/ConfiguracionPage"));
 
@@ -201,6 +202,17 @@ export const MENUITEMS: Menu = [
                 path: `${import.meta.env.BASE_URL}costos-envio`,
                 selected: false,
                 element: <CostosEnvioPage />,
+                permisoUsuario: "free",
+                hidden: true,
+            },
+            {
+                title: 'Cuentas bancarias',
+                icon: Icon('bi-bank'),
+                type: 'link',
+                active: false,
+                path: `${import.meta.env.BASE_URL}cuentas-bancarias`,
+                selected: false,
+                element: <CuentasBancariasPage />,
                 permisoUsuario: "free",
                 hidden: true,
             },

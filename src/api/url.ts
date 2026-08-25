@@ -121,6 +121,14 @@ export const UrlCostosEnvioEndpoints = {
   EliminarCostoEnvio: `${UrlCostosEnvioAdmin}/EliminarCostoEnvio/`,
 };
 
+export const UrlCuentasBancariasAdmin: string = `${apibase}CuentasBancarias`;
+export const UrlCuentasBancariasEndpoints = {
+  ListarCuentasBancarias: `${UrlCuentasBancariasAdmin}/ListarCuentasBancarias`,
+  CrearCuentaBancaria: `${UrlCuentasBancariasAdmin}/CrearCuentaBancaria`,
+  ActualizarCuentaBancaria: `${UrlCuentasBancariasAdmin}/ActualizarCuentaBancaria`,
+  EliminarCuentaBancaria: `${UrlCuentasBancariasAdmin}/EliminarCuentaBancaria/`,
+};
+
 /*
   ==============================
   REGION: Servicios

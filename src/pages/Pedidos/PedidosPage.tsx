@@ -3,8 +3,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Pageheader from "../../Components/Layouts/Pageheader/Pageheader";
 import PeriodFilter from "../../Components/components/PeriodFilter";
 import { UsePedidos } from "../../api/Controller/Pedidos/PedidosController";
-import { orderStatusFlow, orderStatusLabels } from "../../data/orders";
-import type { OrderStatus, StoreOrder } from "../../types/orders";
+import { orderStatusFlow, orderStatusLabels, paymentTypeLabels, resolvePaymentType } from "../../data/orders";
+import type { OrderStatus, PaymentType, StoreOrder } from "../../types/orders";
 import type { OrderDateRange, OrderPeriodFilter } from "../../types/period";
 import { mapPedidoToStoreOrder, toEstadoPedido } from "../../utils/order-mapper";
 import { filterOrdersByPeriod } from "../../utils/order-period";
@@ -18,6 +18,13 @@ const currencyFormatter = new Intl.NumberFormat('es-EC', {
 
 const generateTrackingNumber = () => String(Math.floor(80000 + Math.random() * 19999));
 
+/** Opciones del filtro por forma de pago. "todos" no filtra nada. */
+const paymentFilterOptions: Array<{ value: PaymentType | 'todos'; label: string }> = [
+    { value: 'todos', label: 'Todas las formas de pago' },
+    { value: 'tarjeta', label: paymentTypeLabels.tarjeta },
+    { value: 'transferencia', label: paymentTypeLabels.transferencia },
+];
+
 const PedidosPage = () => {
     const { Listar, Actualizar } = UsePedidos();
     const [orders, setOrders] = useState<StoreOrder[]>([]);
@@ -25,15 +32,31 @@ const PedidosPage = () => {
     const [loadError, setLoadError] = useState("");
     const [isCreateOrderOpen, setIsCreateOrderOpen] = useState(false);
     const [selectedPeriod, setSelectedPeriod] = useState<OrderPeriodFilter>('today');
+    const [search, setSearch] = useState("");
+    const [paymentFilter, setPaymentFilter] = useState<PaymentType | 'todos'>('todos');
     const [dateRange, setDateRange] = useState<OrderDateRange>({
         from: '2026-05-01',
         to: '2026-05-30',
     });
 
-    const filteredOrders = useMemo(
-        () => filterOrdersByPeriod(orders, selectedPeriod, dateRange),
-        [dateRange, orders, selectedPeriod],
-    );
+    // Periodo, forma de pago y busqueda por ticket se aplican en memoria: la lista
+    // llega completa del back y asi los pedidos creados a mano tambien se filtran.
+    const filteredOrders = useMemo(() => {
+        const term = search.trim().toLowerCase();
+
+        return filterOrdersByPeriod(orders, selectedPeriod, dateRange).filter((order) => {
+            if (paymentFilter !== 'todos' && resolvePaymentType(order) !== paymentFilter) {
+                return false;
+            }
+            if (term.length === 0) {
+                return true;
+            }
+            // Una transferencia no tiene ticket, asi que tambien se busca por numero de pedido.
+            return [order.ticketNumber, order.orderNumber].some(
+                (valor) => valor?.toLowerCase().includes(term),
+            );
+        });
+    }, [dateRange, orders, paymentFilter, search, selectedPeriod]);
 
     // Los pedidos pagados en la tienda entran por aqui: se listan desde la BD.
     const cargarPedidos = useCallback(async () => {
@@ -140,6 +163,29 @@ const PedidosPage = () => {
                                 onRangeChange={setDateRange}
                             />
 
+                            <Row className="mb-3">
+                                <Col md={7}>
+                                    <Form.Label className="text-primary">N° de ticket o de pedido</Form.Label>
+                                    <Form.Control
+                                        placeholder="Ej: 923847561"
+                                        value={search}
+                                        onChange={({ target: { value } }) => setSearch(value)}
+                                    />
+                                </Col>
+                                <Col md={5}>
+                                    <Form.Label className="text-primary">Forma de pago</Form.Label>
+                                    <Form.Select
+                                        value={paymentFilter}
+                                        //prettier-ignore
+                                        onChange={({ target: { value } }) => setPaymentFilter(value as PaymentType | 'todos')}
+                                    >
+                                        {paymentFilterOptions.map((option) => (
+                                            <option key={option.value} value={option.value}>{option.label}</option>
+                                        ))}
+                                    </Form.Select>
+                                </Col>
+                            </Row>
+
                             <div className="d-flex flex-wrap mb-3" style={{ gap: 10 }}>
                                 {orderStatusFlow.map((status) => (
                                     <Badge key={status} bg="primary-transparent" className="text-primary p-2">
@@ -164,7 +210,10 @@ const PedidosPage = () => {
                                 <Card.Header className="d-flex justify-content-between align-items-center">
                                     <div>
                                         <Card.Title as="h5" className="mb-0">{order.orderNumber}</Card.Title>
-                                        <small className="text-muted">{order.orderDate} · {order.paymentMethod}</small>
+                                        <small className="text-muted d-block">{order.orderDate} · {order.paymentMethod}</small>
+                                        {order.ticketNumber && (
+                                            <small className="text-muted">Ticket: <b>{order.ticketNumber}</b></small>
+                                        )}
                                     </div>
                                     <Badge bg="primary">{orderStatusLabels[order.status]}</Badge>
                                 </Card.Header>
@@ -256,7 +305,7 @@ const PedidosPage = () => {
                     <Col lg={12}>
                         <Card><Card.Body>
                             <p className="text-muted mb-0 text-center">
-                                {loading ? 'Cargando pedidos…' : 'No hay pedidos en el periodo seleccionado.'}
+                                {loading ? 'Cargando pedidos…' : 'No hay pedidos que coincidan con los filtros.'}
                             </p>
                         </Card.Body></Card>
                     </Col>

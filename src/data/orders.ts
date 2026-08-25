@@ -1,4 +1,4 @@
-import type { OrderStatus, StoreOrder } from '../types/orders';
+import type { OrderStatus, PaymentType, StoreOrder } from '../types/orders';
 
 export const orderStatusLabels: Record<OrderStatus, string> = {
   verificando: 'En verificación',
@@ -6,6 +6,17 @@ export const orderStatusLabels: Record<OrderStatus, string> = {
   despachado: 'Despachado',
   cancelado: 'Cancelado',
 };
+
+export const paymentTypeLabels: Record<PaymentType, string> = {
+  tarjeta: 'Tarjeta de crédito',
+  transferencia: 'Transferencia',
+};
+
+/** Los pedidos creados a mano en el panel no traen paymentType: se deduce del texto. */
+export function resolvePaymentType(order: StoreOrder): PaymentType {
+  if (order.paymentType) return order.paymentType;
+  return order.paymentMethod.toLowerCase().includes('transfer') ? 'transferencia' : 'tarjeta';
+}
 
 /** Estados que el panel ofrece en el selector, en el orden del flujo. */
 export const orderStatusFlow: OrderStatus[] = ['verificando', 'iniciado', 'despachado', 'cancelado'];

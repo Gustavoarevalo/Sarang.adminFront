@@ -1,6 +1,6 @@
-import { EnumEstadoPedido, EnumMetodoEntrega } from '../api/Controller/Pedidos/InterfacePedidos';
+import { EnumEstadoPedido, EnumMetodoEntrega, EnumMetodoPago } from '../api/Controller/Pedidos/InterfacePedidos';
 import type { IPedidoAdminDto } from '../api/Controller/Pedidos/InterfacePedidos';
-import type { OrderStatus, StoreOrder } from '../types/orders';
+import type { OrderStatus, PaymentType, StoreOrder } from '../types/orders';
 
 const estadoToStatus: Record<EnumEstadoPedido, OrderStatus> = {
   [EnumEstadoPedido.Verificando]: 'verificando',
@@ -24,6 +24,10 @@ export function toEstadoPedido(status: OrderStatus): EnumEstadoPedido {
   return statusToEstado[status] ?? EnumEstadoPedido.Iniciado;
 }
 
+export function toPaymentType(metodo: EnumMetodoPago): PaymentType {
+  return metodo === EnumMetodoPago.Transferencia ? 'transferencia' : 'tarjeta';
+}
+
 /** "2026-05-30T09:15:00" -> "2026-05-30 09:15" (formato que espera filterOrdersByPeriod). */
 function formatOrderDate(fecha: string): string {
   const date = new Date(fecha);
@@ -41,6 +45,8 @@ export function mapPedidoToStoreOrder(pedido: IPedidoAdminDto): StoreOrder {
     orderDate: formatOrderDate(pedido.fechaPedido),
     deliveryMethod: pedido.metodoEntrega === EnumMetodoEntrega.Pickup ? 'pickup' : 'courier',
     paymentMethod: pedido.metodoPago,
+    paymentType: toPaymentType(pedido.metodoPagoTipo),
+    ticketNumber: pedido.ticketNumber ?? undefined,
     status: toOrderStatus(pedido.estadoPedido),
     sendificoTracking: pedido.tracking ?? undefined,
     courier: pedido.courier ?? undefined,

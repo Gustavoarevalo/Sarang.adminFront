@@ -1,0 +1,31 @@
+# Sin esto el contexto de build se lleva node_modules (~600 paquetes),
+# dist y todo .git al demonio de Docker: build lentisimo y riesgo de
+# copiar dependencias del host (compiladas para otra plataforma).
+node_modules
+dist
+dist-ssr
+.git
+.gitignore
+.firebase
+.vscode
+.agents
+.codex
+
+# Los secretos entran por build args, nunca por archivo.
+# Si se colara un .env, Vite lo cargaria y hornearia localhost:5087
+# (o credenciales de desarrollo) dentro de la imagen.
+.env
+.env.*
+!.env.production.example
+
+# Nada de esto sirve dentro de la imagen.
+*.log
+pglite-debug.log
+Readme-Legal.txt
+README.md
+firebase.json
+.firebaserc
+gulpfile.js
+docker-compose.yml
+dockerfile
+.dockerignore

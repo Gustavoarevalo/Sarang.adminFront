@@ -7,6 +7,12 @@ export enum EnumEstadoPedido {
   Verificando = 4,
 }
 
+/** Espejo de EnumMetodoPago del backend. */
+export enum EnumMetodoPago {
+  Tarjeta = 1,
+  Transferencia = 2,
+}
+
 export enum EnumMetodoEntrega {
   Pickup = 1,
   Courier = 2,
@@ -40,6 +46,9 @@ export interface IPedidoAdminDto {
   clienteTelefono?: string | null;
   metodoEntrega: EnumMetodoEntrega;
   metodoPago: string;
+  metodoPagoTipo: EnumMetodoPago;
+  /** Ticket de Kushki del cobro con tarjeta. Null en las transferencias. */
+  ticketNumber?: string | null;
   estadoPedido: EnumEstadoPedido;
   subtotalSinIva: number;
   ivaTotal: number;

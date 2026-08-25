@@ -112,6 +112,15 @@ export const UrlIvaEndpoints = {
   EliminarIva: `${UrlIvaAdmin}/EliminarIva/`,
 };
 
+export const UrlCostosEnvioAdmin: string = `${apibase}CostosEnvio`;
+export const UrlCostosEnvioEndpoints = {
+  ListarCostosEnvio: `${UrlCostosEnvioAdmin}/ListarCostosEnvio`,
+  ListarProvincias: `${UrlCostosEnvioAdmin}/ListarProvincias`,
+  CrearCostoEnvio: `${UrlCostosEnvioAdmin}/CrearCostoEnvio`,
+  ActualizarCostoEnvio: `${UrlCostosEnvioAdmin}/ActualizarCostoEnvio`,
+  EliminarCostoEnvio: `${UrlCostosEnvioAdmin}/EliminarCostoEnvio/`,
+};
+
 /*
   ==============================
   REGION: Servicios

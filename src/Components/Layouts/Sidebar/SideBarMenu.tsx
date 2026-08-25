@@ -15,6 +15,7 @@ const DescuentosPage = lazy(() => import("../../../pages/Descuentos/DescuentosPa
 const CategoriasPage = lazy(() => import("../../../pages/Catalogos/Categorias/CategoriasPage"));
 const ImpuestosPage = lazy(() => import("../../../pages/Catalogos/Impuestos/ImpuestosPage"));
 const IvaPage = lazy(() => import("../../../pages/Catalogos/Iva/IvaPage"));
+const CostosEnvioPage = lazy(() => import("../../../pages/Catalogos/CostosEnvio/CostosEnvioPage"));
 // -------------- Configuracion --------------------- //
 const ConfiguracionPage = lazy(() => import("../../../pages/Configuracion/ConfiguracionPage"));
 
@@ -189,6 +190,17 @@ export const MENUITEMS: Menu = [
                 path: `${import.meta.env.BASE_URL}iva`,
                 selected: false,
                 element: <IvaPage />,
+                permisoUsuario: "free",
+                hidden: true,
+            },
+            {
+                title: 'Costos de envío',
+                icon: Icon('bi-truck'),
+                type: 'link',
+                active: false,
+                path: `${import.meta.env.BASE_URL}costos-envio`,
+                selected: false,
+                element: <CostosEnvioPage />,
                 permisoUsuario: "free",
                 hidden: true,
             },

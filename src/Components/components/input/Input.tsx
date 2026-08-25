@@ -2,7 +2,7 @@ import { Col, Form, } from "react-bootstrap";
 import { InputProps } from "./Inputinterface";
 
 //prettier-ignore
-const Input: React.FC<InputProps> = ({ accept="", id = "", label = "", placeholder = "", max, min, Feedback = "", type = "text", required = false, typeFeedback = undefined, value = "", disabled = false, onChange, className = "" }) => {
+const Input: React.FC<InputProps> = ({ accept="", id = "", label = "", placeholder = "", max, min, step, Feedback = "", type = "text", required = false, typeFeedback = undefined, value = "", disabled = false, onChange, className = "" }) => {
     return (
         <div>
             <Col className="mb-3">
@@ -19,6 +19,7 @@ const Input: React.FC<InputProps> = ({ accept="", id = "", label = "", placehold
                     onChange={onChange}
                     max={max}
                     min={min}
+                    step={step}
                 />
                 <Form.Control.Feedback
                     type={typeFeedback}

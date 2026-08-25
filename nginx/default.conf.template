@@ -11,7 +11,9 @@
 resolver 127.0.0.11 valid=10s ipv6=off;
 
 server {
-    listen 80;
+    # Puerto 85 (no el 80 por defecto de la imagen). Tiene que coincidir
+    # con el EXPOSE del dockerfile y con el healthcheck del compose.
+    listen 85;
     server_name _;
 
     root /usr/share/nginx/html;

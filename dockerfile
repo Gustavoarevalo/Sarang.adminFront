@@ -70,6 +70,8 @@ ENV BACKEND_ORIGIN=http://gateway:5087 \
 COPY nginx/default.conf.template /etc/nginx/templates/default.conf.template
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-EXPOSE 80
+# nginx escucha en 85 (ver listen en nginx/default.conf.template),
+# no en el 80 por defecto de la imagen.
+EXPOSE 85
 
 # El CMD por defecto de la imagen (nginx -g 'daemon off;') ya sirve.

@@ -1,13 +1,14 @@
 import type { OrderStatus, StoreOrder } from '../types/orders';
 
 export const orderStatusLabels: Record<OrderStatus, string> = {
+  verificando: 'En verificación',
   iniciado: 'Iniciado',
   despachado: 'Despachado',
   cancelado: 'Cancelado',
 };
 
 /** Estados que el panel ofrece en el selector, en el orden del flujo. */
-export const orderStatusFlow: OrderStatus[] = ['iniciado', 'despachado', 'cancelado'];
+export const orderStatusFlow: OrderStatus[] = ['verificando', 'iniciado', 'despachado', 'cancelado'];
 
 export const ordersSeed: StoreOrder[] = [
   {

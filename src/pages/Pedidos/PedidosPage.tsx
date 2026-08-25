@@ -61,7 +61,7 @@ const PedidosPage = () => {
         () =>
             filteredOrders.reduce<Record<OrderStatus, number>>(
                 (result, order) => ({ ...result, [order.status]: result[order.status] + 1 }),
-                { iniciado: 0, despachado: 0, cancelado: 0 },
+                { verificando: 0, iniciado: 0, despachado: 0, cancelado: 0 },
             ),
         [filteredOrders],
     );
@@ -204,6 +204,16 @@ const PedidosPage = () => {
                                             <p className="mb-0">{order.address.city}, {order.address.neighborhood}</p>
                                             <p className="mb-0">{order.address.street}</p>
                                             <p className="text-muted">{order.address.reference}</p>
+                                        </>
+                                    )}
+
+                                    {order.comprobanteUrl && (
+                                        <>
+                                            <hr />
+                                            <h6 className="text-primary">Transferencia</h6>
+                                            <a href={order.comprobanteUrl} target="_blank" rel="noreferrer">
+                                                Ver comprobante
+                                            </a>
                                         </>
                                     )}
 

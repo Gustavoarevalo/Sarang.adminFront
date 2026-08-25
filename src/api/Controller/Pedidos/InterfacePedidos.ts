@@ -3,6 +3,8 @@ export enum EnumEstadoPedido {
   Iniciado = 1,
   Despachado = 2,
   Cancelado = 3,
+  /** Transferencia bancaria con comprobante subido, pendiente de validar. */
+  Verificando = 4,
 }
 
 export enum EnumMetodoEntrega {
@@ -46,6 +48,8 @@ export interface IPedidoAdminDto {
   total: number;
   courier?: string | null;
   tracking?: string | null;
+  /** Comprobante de la transferencia subido por el cliente. Null si pago con tarjeta. */
+  comprobanteUrl?: string | null;
   direccion?: IPedidoDireccionAdminDto | null;
   items: IPedidoItemAdminDto[];
 }

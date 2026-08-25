@@ -3,12 +3,14 @@ import type { IPedidoAdminDto } from '../api/Controller/Pedidos/InterfacePedidos
 import type { OrderStatus, StoreOrder } from '../types/orders';
 
 const estadoToStatus: Record<EnumEstadoPedido, OrderStatus> = {
+  [EnumEstadoPedido.Verificando]: 'verificando',
   [EnumEstadoPedido.Iniciado]: 'iniciado',
   [EnumEstadoPedido.Despachado]: 'despachado',
   [EnumEstadoPedido.Cancelado]: 'cancelado',
 };
 
 const statusToEstado: Record<OrderStatus, EnumEstadoPedido> = {
+  verificando: EnumEstadoPedido.Verificando,
   iniciado: EnumEstadoPedido.Iniciado,
   despachado: EnumEstadoPedido.Despachado,
   cancelado: EnumEstadoPedido.Cancelado,
@@ -42,6 +44,7 @@ export function mapPedidoToStoreOrder(pedido: IPedidoAdminDto): StoreOrder {
     status: toOrderStatus(pedido.estadoPedido),
     sendificoTracking: pedido.tracking ?? undefined,
     courier: pedido.courier ?? undefined,
+    comprobanteUrl: pedido.comprobanteUrl ?? undefined,
     totals: {
       subtotal: pedido.subtotalSinIva,
       iva: pedido.ivaTotal,

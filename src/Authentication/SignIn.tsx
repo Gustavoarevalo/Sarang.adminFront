@@ -1,7 +1,7 @@
 import { Alert, Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
-import faviconWhite from '../../public/images/logo_aplicacion_final_cea_universal_sin_fondo.png';
-import login from '../../public/images/logoceasinbg.png';
+import faviconWhite from '../../public/images/logo-tienda-mark.svg';
+import login from '../../public/images/logo-tienda-hero.svg';
 import { useFillData } from '../Hooks/useFilldata';
 import { ILogin, LoginDataDefualt } from '../api/Controller/Seguridad/auth/interfaceAuthController';
 import { useAuth } from '../api/Controller/Seguridad/auth/authController';
@@ -133,12 +133,12 @@ export default function SignIn() {
                                                                     <i className={`bi ${data.setShowPassword ? "bi-eye-slash" : "bi-eye"}`}></i>
                                                                 </Button>
                                                             </Form.Group>
-                                                            <Col className="text-start mb-3">
+                                                            {/* <Col className="text-start mb-3">
                                                                 <NavLink
                                                                     className="text-dark " to={'PoliticasPrivacidad'}>
                                                                     Ver política de <span className="text-decoration-underline text-primary">Tratamiento de Datos</span>
                                                                 </NavLink>
-                                                            </Col>
+                                                            </Col> */}
                                                             <Button className="btn-main-primary btn-block" style={{ color: "#fff", backgroundColor: "#4caf50", borderColor: "#4caf50" }} type="submit" disabled={data.disabled}>
                                                                 Iniciar Sesion{data.loading && <span role="status" aria-hidden="true" className="spinner-border spinner-border-sm ms-2"></span>}
                                                             </Button>

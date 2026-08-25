@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 480" role="img" aria-label="Ilustracion de administracion de tienda">
+  <defs>
+    <linearGradient id="heroGreen" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#66bb6a"/>
+      <stop offset="1" stop-color="#43a047"/>
+    </linearGradient>
+    <linearGradient id="heroDeep" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#4caf50"/>
+      <stop offset="1" stop-color="#2e7d32"/>
+    </linearGradient>
+    <filter id="heroShadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="10"/>
+      <feOffset dy="10" result="shadowAlpha"/>
+      <feFlood flood-color="#1b5e20" flood-opacity="0.16"/>
+      <feComposite in2="shadowAlpha" operator="in"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <circle cx="300" cy="238" r="196" fill="#4caf50" opacity="0.10"/>
+  <circle cx="300" cy="238" r="150" fill="#4caf50" opacity="0.08"/>
+
+  <!-- Tienda -->
+  <g filter="url(#heroShadow)">
+    <rect x="150" y="176" width="300" height="192" rx="18" fill="#ffffff"/>
+
+    <!-- Toldo -->
+    <path d="M150 194a18 18 0 0 1 18-18h264a18 18 0 0 1 18 18v22H150v-22Z" fill="url(#heroDeep)"/>
+    <g fill="#ffffff" opacity="0.35">
+      <rect x="186" y="176" width="36" height="40"/>
+      <rect x="258" y="176" width="36" height="40"/>
+      <rect x="330" y="176" width="36" height="40"/>
+      <rect x="402" y="176" width="30" height="40"/>
+    </g>
+
+    <!-- Vitrina con lista de productos -->
+    <rect x="176" y="242" width="152" height="100" rx="12" fill="#f1f8f2"/>
+    <g fill="#a5d6a7">
+      <rect x="192" y="262" width="20" height="20" rx="6"/>
+      <rect x="192" y="292" width="20" height="20" rx="6"/>
+      <rect x="192" y="322" width="20" height="8" rx="4"/>
+    </g>
+    <g fill="#c8e6c9">
+      <rect x="222" y="266" width="90" height="10" rx="5"/>
+      <rect x="222" y="296" width="72" height="10" rx="5"/>
+    </g>
+
+    <!-- Puerta -->
+    <path d="M352 342v-70a30 30 0 0 1 60 0v70h-60Z" fill="#e8f5e9"/>
+    <circle cx="360" cy="308" r="5" fill="#81c784"/>
+  </g>
+
+  <!-- Panel de metricas flotante -->
+  <g filter="url(#heroShadow)">
+    <rect x="62" y="76" width="176" height="112" rx="16" fill="#ffffff"/>
+    <rect x="82" y="96" width="62" height="9" rx="4.5" fill="#c8e6c9"/>
+    <rect x="82" y="152" width="20" height="18" rx="5" fill="url(#heroGreen)"/>
+    <rect x="112" y="138" width="20" height="32" rx="5" fill="url(#heroGreen)"/>
+    <rect x="142" y="122" width="20" height="48" rx="5" fill="url(#heroGreen)"/>
+    <rect x="172" y="132" width="20" height="38" rx="5" fill="#a5d6a7"/>
+    <rect x="202" y="114" width="20" height="56" rx="5" fill="#a5d6a7"/>
+  </g>
+
+  <!-- Bolsa de compras flotante -->
+  <g filter="url(#heroShadow)">
+    <rect x="416" y="262" width="132" height="132" rx="24" fill="#ffffff"/>
+    <path d="M462 306v-8a20 20 0 0 1 40 0v8" fill="none" stroke="#4caf50" stroke-width="8" stroke-linecap="round"/>
+    <path d="M448 302h68l-6 62a12 12 0 0 1-12 11h-32a12 12 0 0 1-12-11l-6-62Z" fill="url(#heroDeep)"/>
+    <path d="M466 340l10 10 20-20" fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Detalles -->
+  <circle cx="118" cy="330" r="14" fill="#a5d6a7" opacity="0.7"/>
+  <circle cx="498" cy="132" r="10" fill="#66bb6a" opacity="0.6"/>
+  <circle cx="524" cy="204" r="6" fill="#2e7d32" opacity="0.35"/>
+  <rect x="150" y="392" width="300" height="12" rx="6" fill="#4caf50" opacity="0.16"/>
+</svg>
